@@ -1,9 +1,5 @@
 let socket = io();
 
-socket.on('mi mensaje', (data) => {
-    alert(data)
-});
-
 fetch("/api/productos-test")
     .then(response => response.json())
     .then(data => {

@@ -2,7 +2,7 @@ import express from 'express';
 import routerProducto from './src/routes/routes.js';
 import { Server as http } from 'http'
 import { Server as ioServer } from 'socket.io'
-import  {normalizeMsj}  from './src/controllers/mensajes.js';
+import { saveMsjs, getMsjs } from './src/controllers/mensajes.js';
 
 const app = express();
 const httpserver = http(app)
@@ -17,7 +17,7 @@ app.use('/api/', routerProducto);
 io.on('connection', socket => {
     console.log('Usuario conectado');
     socket.on('enviarMensaje', (msj) => {
-        normalizeMsj(msj);
+        saveMsjs(msj);
     })
 })
 

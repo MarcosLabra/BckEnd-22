@@ -1,17 +1,44 @@
-import {normalize, denormalize, schema} from 'normalizr';
+import config from '../config/dbConfig.js';
+import mongoose from 'mongoose';
 
 
+try {
+    mongoose.connect(config.mongoDb.url, config.mongoDb.options)
+    console.log("Connected to MongoDB Products");
+} catch (error) {
+    console.log(error);
+};
 
-const user = new schema.Entity('user');
-const mensaje = new schema.Entity('mensaje');
-const mensajes = new schema.Entity('mensaje', {
-    author: user,
-    mensajes: [mensaje]
+const mongooseSchema = new mongoose.Schema({
+    author: {
+        id: { type: String, required: true, max: 100 },
+        nombre: { type: String, required: true, max: 100 },
+        apellido: { type: String, required: true, max: 50 },
+        edad: { type: Number, required: true },
+        alias: { type: String, required: true },
+        avatar: { type: String, required: true, max: 100 }
+    },
+    text: { type: String, required: true, max: 400 }
 });
 
-const normalizeMsj = (msj) => {
-    const normalizedMensaje = normalize(msj, mensaje);
-    console.log(normalizedMensaje);
+const msjModel = mongoose.model('mensajes', mongooseSchema);
+
+const saveMsjs = async (msj) => {
+    const newMsj = new msjModel(msj);
+    try {
+        newMsj.save()
+    } catch (error) {
+        throw new Error(error);
+    }
 }
 
-export { normalizeMsj };
+const getMsjs = async () => {
+    try {
+        const msjs = await msjModel.find();
+        return msjs;
+    } catch (error) {
+        throw new Error(error);
+    }
+}
+
+export { saveMsjs, getMsjs };
