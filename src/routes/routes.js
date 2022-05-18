@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { faker } from '@faker-js/faker';
+import { createFakeProducts } from '../controllers/products.js';
 
 const routerProducto = Router();
 
@@ -7,15 +7,7 @@ routerProducto.
     route('/productos-test')
     .get(async (req, res) => {
 
-        const products = [];
-        for (let i = 0; i < 5; i++) {
-            const product = {
-                name: faker.commerce.productName(),
-                price: faker.commerce.price(),
-                image: faker.image.imageUrl()
-            }
-            products.push(product);
-        }
+        const products = await createFakeProducts();
         if (products.length > 0) {
             res.status(200).json(products);
         } else {

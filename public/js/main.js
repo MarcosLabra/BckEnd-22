@@ -1,18 +1,18 @@
+let socket = io();
 
-let products = [
-];
+socket.on('mi mensaje', (data) => {
+    alert(data)
+});
 
 fetch("/api/productos-test")
     .then(response => response.json())
     .then(data => {
-        products = data;
-
         renderTable(data);
     })
-
-const table = document.getElementById("table");
+    .catch(error => console.log(error));
 
 function renderTable(data) {
+    const table = document.getElementById("table");
     data.forEach(element => {
         const tr = document.createElement("tr");
         const tdNombre = document.createElement("td");
@@ -31,4 +31,21 @@ function renderTable(data) {
     });
 }
 
+const ingresoMensaje = document.getElementById("ingresoMensaje");
+const botonEnviar = document.getElementById("botonEnviar");
 
+botonEnviar.addEventListener('click', (e) => {
+    e.preventDefault()
+    const mensaje = {
+        author: {
+            id: ingresoMensaje.children.id.value,
+            nombre: ingresoMensaje.children.nombre.value,
+            apellido: ingresoMensaje.children.apellido.value,
+            edad: ingresoMensaje.children.edad.value,
+            alias: ingresoMensaje.children.alias.value,
+            avatar: ingresoMensaje.children.avatar.value,
+        },
+        text: ingresoMensaje.children.text.value
+    }
+     socket.emit('enviarMensaje', mensaje);
+})
