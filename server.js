@@ -14,11 +14,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/', routerProducto);
 
-io.on('connection', socket => {
+io.on('connection', async (socket) => {
     console.log('Usuario conectado');
     socket.on('enviarMensaje', (msj) => {
         saveMsjs(msj);
     })
+
+    socket.emit ('mensajes', await getMsjs());
 })
 
 const PORT = process.env.PORT || 8080;

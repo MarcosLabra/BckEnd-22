@@ -1,6 +1,7 @@
 import config from '../config/dbConfig.js';
 import mongoose from 'mongoose';
-
+import { normalizeMsj } from './normalizr.js';
+import util from 'util';
 
 try {
     mongoose.connect(config.mongoDb.url, config.mongoDb.options)
@@ -23,6 +24,8 @@ const mongooseSchema = new mongoose.Schema({
 
 const msjModel = mongoose.model('mensajes', mongooseSchema);
 
+
+
 const saveMsjs = async (msj) => {
     const newMsj = new msjModel(msj);
     try {
@@ -34,8 +37,8 @@ const saveMsjs = async (msj) => {
 
 const getMsjs = async () => {
     try {
-        const msjs = await msjModel.find();
-        return msjs;
+        const mensajes = await msjModel.find();
+        return normalizeMsj(mensajes);
     } catch (error) {
         throw new Error(error);
     }

@@ -45,3 +45,7 @@ botonEnviar.addEventListener('click', (e) => {
     }
      socket.emit('enviarMensaje', mensaje);
 })
+
+socket.on('mensajes', (msj) => {
+    console.log(msj);
+})
