@@ -9,22 +9,14 @@ fetch("/api/productos-test")
 
 function renderTable(data) {
     const table = document.getElementById("table");
-    data.forEach(element => {
-        const tr = document.createElement("tr");
-        const tdNombre = document.createElement("td");
-        tdNombre.innerHTML = element.name;
-        const tdPrecio = document.createElement("td");
-        tdPrecio.innerHTML = element.price;
-        const tdImagen = document.createElement("td");
-        const imagen = document.createElement("img");
-        imagen.src = element.image;
-        imagen.height = "100";
-        tdImagen.appendChild(imagen);
-        tr.appendChild(tdNombre);
-        tr.appendChild(tdPrecio);
-        tr.appendChild(tdImagen);
-        table.appendChild(tr);
-    });
+    const html = data.map(element => {
+        return (`<tr>
+        <td>${element.name}</td>
+        <td>${element.price}</td>
+        <td><img src="${element.image}" style="height:100px"></td>
+        </tr>`);
+    }).join("");
+        table.innerHTML += html;
 }
 
 const ingresoMensaje = document.getElementById("ingresoMensaje");
@@ -43,9 +35,35 @@ botonEnviar.addEventListener('click', (e) => {
         },
         text: ingresoMensaje.children.text.value
     }
-     socket.emit('enviarMensaje', mensaje);
+    socket.emit('enviarMensaje', mensaje);
 })
 
+//normalizr esquemas
+const authorsSchema = new normalizr.schema.Entity('authors');
+const msjSchema = new normalizr.schema.Entity('mensajes', { author: authorsSchema }, { idAttribute: 'id' });
+const fileSchema = [msjSchema]
+
+const renderMsj = (msj) => {
+    msj.map(element => {
+        const html = ` <article>
+        <span class="id">${element._doc.author.id}</span><span class="time">[${element._doc.author.timestamp}]:</span><span clas="text">${element._doc.text}</span><img src="${element._doc.author.avatar}" alt="avatar" class="avatar">
+                        </article>`;
+        const mensajes = document.getElementById("mensajes");
+        mensajes.innerHTML += html;
+    })
+}
+
 socket.on('mensajes', (msj) => {
-    console.log(msj);
+    const denormMsjs = normalizr.denormalize(msj.result, fileSchema, msj.entities);
+    renderMsj(denormMsjs);
+    renderComp(msj, denormMsjs);
 })
+
+const renderComp = (msj, denormMsjs) => {
+    const comp = document.getElementById("compresion");
+    const denormMsjsLength = (JSON.stringify(denormMsjs)).length;
+    const msjLength = (JSON.stringify(msj)).length;
+    const compresion = ((msjLength - denormMsjsLength) / msjLength * 100).toFixed(2);
+    comp.innerHTML = `(Compresion: ${compresion}%)`;
+}
+

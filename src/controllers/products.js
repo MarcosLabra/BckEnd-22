@@ -7,7 +7,7 @@ const createFakeProducts = async () => {
         const product = {
             name: faker.commerce.productName(),
             price: faker.commerce.price(),
-            image: faker.image.imageUrl()
+            image: faker.image.cats()
         }
         products.push(product);
     }

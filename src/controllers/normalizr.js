@@ -7,7 +7,6 @@ const fileSchema = [msjSchema]
 
 const normalizeMsj = (msj) => {
 const normalizedMensaje = normalize(msj, fileSchema);
-console.log(normalizedMensaje);
 return normalizedMensaje;
 }
 

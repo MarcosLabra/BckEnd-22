@@ -1,7 +1,6 @@
 import config from '../config/dbConfig.js';
 import mongoose from 'mongoose';
 import { normalizeMsj } from './normalizr.js';
-import util from 'util';
 
 try {
     mongoose.connect(config.mongoDb.url, config.mongoDb.options)
@@ -17,7 +16,8 @@ const mongooseSchema = new mongoose.Schema({
         apellido: { type: String, required: true, max: 50 },
         edad: { type: Number, required: true },
         alias: { type: String, required: true },
-        avatar: { type: String, required: true, max: 100 }
+        avatar: { type: String, required: true, max: 100 },
+        timestamp: { type: Date, default: Date.now }
     },
     text: { type: String, required: true, max: 400 }
 });
